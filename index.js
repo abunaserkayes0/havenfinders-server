@@ -108,6 +108,19 @@ app.post("/tourist", async (req, res) => {
   }
 });
 
+app.post("/users", async (req, res) => {
+  try {
+    const { email, displayName, photoURL } = req.body;
+    const user = {
+      email,
+      displayName,
+      photoURL
+    };
+    const result = await req.db.collection("users").insertOne(user);
+    res.send(result);
+  } catch (error) {}
+});
+
 app.listen(port, () => {
   console.log(`Listing Port ${port}`);
 });
