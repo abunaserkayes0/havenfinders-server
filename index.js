@@ -108,17 +108,81 @@ app.post("/tourist", async (req, res) => {
   }
 });
 
+app.delete("/tourist/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const query = { _id: new ObjectId(id) };
+    const result = await req.db.collection("tourist").deleteOne(query);
+    res.send(result);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+app.put("/tourist/:id", async (req, res) => {
+  try {
+    const {
+      averageCost,
+      countryName,
+      imageUrl,
+      location,
+      seasonality,
+      shortDescription,
+      spotName,
+      totalVisitorsPerYear,
+      travelTime,
+      userEmail,
+      userName,
+    } = req.body;
+    const { id } = req.params;
+    const filter = { _id: new ObjectId(id) };
+    const options = { upsert: true };
+    const updateDoc = {
+      $set: {
+        averageCost,
+        countryName,
+        imageUrl,
+        location,
+        seasonality,
+        shortDescription,
+        spotName,
+        totalVisitorsPerYear,
+        travelTime,
+        userEmail,
+        userName,
+      },
+    };
+    const result = await req.db
+      .collection("tourist")
+      .updateOne(filter, updateDoc, options);
+    res.send(result);
+  } catch (error) {}
+});
+
 app.post("/users", async (req, res) => {
   try {
     const { email, displayName, photoURL } = req.body;
     const user = {
       email,
       displayName,
-      photoURL
+      photoURL,
     };
     const result = await req.db.collection("users").insertOne(user);
     res.send(result);
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+app.get("/users/:email", async (req, res) => {
+  try {
+    const { email } = req.params;
+    const query = { userEmail: email };
+    const result = await req.db.collection("tourist").find(query).toArray();
+    res.send(result);
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 app.listen(port, () => {
